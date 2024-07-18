@@ -10,6 +10,8 @@ import (
 type ServicesI interface {
 	UserRegister(ctx *gin.Context)
 	UserLogin(ctx *gin.Context)
+	SendVerificationEmail(ctx *gin.Context)
+	VerifyEmail(ctx *gin.Context)
 }
 
 type Options struct {

@@ -10,8 +10,15 @@ import (
 
 var NotFoundError = errors.New("record not found")
 
+type ColumnName string
+
+func (name ColumnName) ToString() string {
+	return string(name)
+}
+
 type I interface {
 	InsertUsers(users []User) error
+	UpdateUser(userID string, fields map[string]interface{}) error
 	FindUserByEmail(email string) (*User, error)
 }
 

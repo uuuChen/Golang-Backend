@@ -4,6 +4,7 @@ import (
 	"errors"
 	"glossika/internal/db"
 	"glossika/internal/users"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -62,7 +63,12 @@ func (s *services) UserRegister(ctx *gin.Context) {
 		return
 	}
 
-	go sendVerificationEmail(req.Email)
+	err = s.sendVerificationEmail(req.Email, 60*time.Minute)
+	if err != nil {
+		logrus.WithError(err).Error("Failed to send verification email")
+		ctx.JSON(500, gin.H{"error": "Internal server error"})
+		return
+	}
 
 	ctx.JSON(201, gin.H{"message": "Registration successful, please verify your email"})
 }

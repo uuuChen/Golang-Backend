@@ -25,6 +25,8 @@ func SetupRouter(opt Options) *gin.Engine {
 	{
 		v1.POST("/user/register", svc.UserRegister)
 		v1.POST("/user/login", svc.UserLogin)
+		v1.POST("/user/send-verification-email", svc.SendVerificationEmail)
+		v1.POST("/user/verify-email", svc.VerifyEmail)
 	}
 
 	return r
