@@ -24,6 +24,7 @@ func SetupRouter(opt Options) *gin.Engine {
 	v1 := r.Group("/v1")
 	{
 		v1.POST("/user/register", svc.UserRegister)
+		v1.POST("/user/login", svc.UserLogin)
 	}
 
 	return r
