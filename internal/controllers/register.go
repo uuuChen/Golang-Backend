@@ -63,12 +63,17 @@ func (s *controllers) UserRegister(ctx *gin.Context) {
 		return
 	}
 
-	err = s.sendVerificationEmail(req.Email, 60*time.Minute)
+	code := generateVerificationCode()
+
+	err = s.sendVerificationEmail(req.Email, code, 60*time.Minute)
 	if err != nil {
 		logrus.WithError(err).Error("Failed to send verification email")
 		ctx.JSON(500, gin.H{"error": "Internal server error"})
 		return
 	}
 
-	ctx.JSON(201, gin.H{"message": "Registration successful, please verify your email"})
+	ctx.JSON(201, gin.H{
+		"message":           "Registration successful. Verification email is sent",
+		"verification_code": code,
+	})
 }

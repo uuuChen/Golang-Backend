@@ -51,7 +51,9 @@ func (s *controllers) SendVerificationEmail(ctx *gin.Context) {
 		return
 	}
 
-	err = s.sendVerificationEmail(req.Email, 60*time.Minute)
+	code := generateVerificationCode()
+
+	err = s.sendVerificationEmail(req.Email, code, 60*time.Minute)
 	if err != nil {
 		logrus.WithError(err).Error("Failed to send verification email")
 		ctx.JSON(500, gin.H{"error": "Internal server error"})
@@ -65,7 +67,10 @@ func (s *controllers) SendVerificationEmail(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(200, gin.H{"message": "Verification email is sent"})
+	ctx.JSON(200, gin.H{
+		"message":           "Verification email is sent",
+		"verification_code": code,
+	})
 }
 
 type verifyEmailReq struct {
@@ -136,9 +141,7 @@ func (s *controllers) setRateLimit(key string, limitTime time.Duration) error {
 	return nil
 }
 
-func (s *controllers) sendVerificationEmail(email string, expiredTime time.Duration) error {
-	code := generateVerificationCode()
-
+func (s *controllers) sendVerificationEmail(email string, code string, expiredTime time.Duration) error {
 	logrus.Infof("Send email to \"%s\" with code \"%s\"\n", email, code)
 
 	err := s.redisClient.Set(email, code, expiredTime).Err()
