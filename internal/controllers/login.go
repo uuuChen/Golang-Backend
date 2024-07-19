@@ -4,6 +4,7 @@ import (
 	"errors"
 	"glossika/internal/db"
 	"glossika/internal/users"
+	"glossika/internal/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -39,6 +40,12 @@ func (s *controllers) UserLogin(ctx *gin.Context) {
 		return
 	}
 
-	// TODO: respond JWT token
-	ctx.JSON(200, gin.H{"message": "Login successful"})
+	token, err := utils.GenerateJWTToken(userDB.ID)
+	if err != nil {
+		logrus.WithError(err).Error("Failed to generate JWT token")
+		ctx.JSON(500, gin.H{"error": "Internal server error"})
+		return
+	}
+
+	ctx.JSON(200, gin.H{"token": token})
 }

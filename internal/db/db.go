@@ -20,6 +20,7 @@ type I interface {
 	InsertUsers(users []User) error
 	UpdateUser(userID string, fields map[string]interface{}) error
 	FindUserByEmail(email string) (*User, error)
+	ListRecommendations() ([]Product, error)
 }
 
 type dbHelper struct {
@@ -33,7 +34,10 @@ func Init() (I, error) {
 		return nil, fmt.Errorf("failed to open mysql db: %w", err)
 	}
 
-	db.AutoMigrate(&User{})
+	err = db.AutoMigrate(&User{}, &Product{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to auto-migrate database: %w", err)
+	}
 
 	return &dbHelper{
 		db: db,
