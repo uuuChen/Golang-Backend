@@ -36,7 +36,7 @@ func (s *controllers) SendVerificationEmail(ctx *gin.Context) {
 	}
 
 	if userDB.IsEmailVerified {
-		ctx.JSON(400, gin.H{"error": "Email has already been verified"})
+		ctx.JSON(409, gin.H{"error": "Email has already been verified"})
 		return
 	}
 
@@ -99,7 +99,7 @@ func (s *controllers) VerifyEmail(ctx *gin.Context) {
 
 	storedCode, err := s.redisClient.Get(req.Email).Result()
 	if err == redis.Nil {
-		ctx.JSON(400, gin.H{"error": "Invalid or expired code"})
+		ctx.JSON(401, gin.H{"error": "Invalid or expired code"})
 		return
 	} else if err != nil {
 		logrus.WithError(err).Error("Failed to get code from Redis")
@@ -107,7 +107,7 @@ func (s *controllers) VerifyEmail(ctx *gin.Context) {
 		return
 	}
 	if storedCode != req.Code {
-		ctx.JSON(400, gin.H{"error": "Incorrect verification code"})
+		ctx.JSON(401, gin.H{"error": "Incorrect verification code"})
 		return
 	}
 

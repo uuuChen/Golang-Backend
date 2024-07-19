@@ -31,7 +31,7 @@ func (s *controllers) UserRegister(ctx *gin.Context) {
 
 	userDB, err := s.db.FindUserByEmail(req.Email)
 	if userDB != nil && userDB.Email == req.Email {
-		ctx.JSON(400, gin.H{"error": "Email has been used"})
+		ctx.JSON(409, gin.H{"error": "Email has been used"})
 		return
 	}
 	if !errors.Is(err, db.NotFoundError) {
