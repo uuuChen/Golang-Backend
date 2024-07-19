@@ -1,8 +1,8 @@
 package routers
 
 import (
+	"glossika/internal/controllers"
 	"glossika/internal/db"
-	"glossika/internal/services"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
@@ -16,17 +16,17 @@ type Options struct {
 func SetupRouter(opt Options) *gin.Engine {
 	r := gin.Default()
 
-	svc := services.New(services.Options{
+	c := controllers.New(controllers.Options{
 		DB:          opt.DB,
 		RedisClient: opt.RedisClient,
 	})
 
 	v1 := r.Group("/v1")
 	{
-		v1.POST("/user/register", svc.UserRegister)
-		v1.POST("/user/login", svc.UserLogin)
-		v1.POST("/user/send-verification-email", svc.SendVerificationEmail)
-		v1.POST("/user/verify-email", svc.VerifyEmail)
+		v1.POST("/user/register", c.UserRegister)
+		v1.POST("/user/login", c.UserLogin)
+		v1.POST("/user/send-verification-email", c.SendVerificationEmail)
+		v1.POST("/user/verify-email", c.VerifyEmail)
 	}
 
 	return r

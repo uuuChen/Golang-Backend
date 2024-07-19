@@ -1,4 +1,4 @@
-package services
+package controllers
 
 import (
 	"errors"
@@ -14,7 +14,7 @@ type userLoginReq struct {
 	PlainPassword string `json:"password"`
 }
 
-func (s *services) UserLogin(ctx *gin.Context) {
+func (s *controllers) UserLogin(ctx *gin.Context) {
 	var req userLoginReq
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(400, gin.H{"error": "Invalid JSON format"})

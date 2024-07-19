@@ -1,4 +1,4 @@
-package services
+package controllers
 
 import (
 	"errors"
@@ -16,7 +16,7 @@ type sendVerificationEmailReq struct {
 	Email string `json:"email"`
 }
 
-func (s *services) SendVerificationEmail(ctx *gin.Context) {
+func (s *controllers) SendVerificationEmail(ctx *gin.Context) {
 	var req sendVerificationEmailReq
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(400, gin.H{"error": "Invalid JSON format"})
@@ -73,7 +73,7 @@ type verifyEmailReq struct {
 	Code  string `json:"code"`
 }
 
-func (s *services) VerifyEmail(ctx *gin.Context) {
+func (s *controllers) VerifyEmail(ctx *gin.Context) {
 	var req verifyEmailReq
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(400, gin.H{"error": "Invalid JSON format"})
@@ -118,7 +118,7 @@ func (s *services) VerifyEmail(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{"message": "Email verified"})
 }
 
-func (s *services) isOverRateLimit(key string) (bool, error) {
+func (s *controllers) isOverRateLimit(key string) (bool, error) {
 	key = fmt.Sprintf("rate_limit:%s", key)
 	ttl, err := s.redisClient.TTL(key).Result()
 	if err != nil && err != redis.Nil {
@@ -127,7 +127,7 @@ func (s *services) isOverRateLimit(key string) (bool, error) {
 	return ttl > 0, nil
 }
 
-func (s *services) setRateLimit(key string, limitTime time.Duration) error {
+func (s *controllers) setRateLimit(key string, limitTime time.Duration) error {
 	key = fmt.Sprintf("rate_limit:%s", key)
 	err := s.redisClient.Set(key, "1", limitTime).Err()
 	if err != nil {
@@ -136,7 +136,7 @@ func (s *services) setRateLimit(key string, limitTime time.Duration) error {
 	return nil
 }
 
-func (s *services) sendVerificationEmail(email string, expiredTime time.Duration) error {
+func (s *controllers) sendVerificationEmail(email string, expiredTime time.Duration) error {
 	code := generateVerificationCode()
 
 	logrus.Infof("Send email to \"%s\" with code \"%s\"\n", email, code)

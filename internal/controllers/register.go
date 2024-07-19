@@ -1,4 +1,4 @@
-package services
+package controllers
 
 import (
 	"errors"
@@ -22,7 +22,7 @@ func (req *userReisterReq) toUser() *users.User {
 	}
 }
 
-func (s *services) UserRegister(ctx *gin.Context) {
+func (s *controllers) UserRegister(ctx *gin.Context) {
 	var req userReisterReq
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(400, gin.H{"error": "Invalid JSON format"})
