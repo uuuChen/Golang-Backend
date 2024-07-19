@@ -2,12 +2,11 @@ package utils
 
 import (
 	"fmt"
+	"glossika/internal/config"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
-
-var jwtSecret = []byte("secret_key") // TODO: replace by env file
 
 type Claims struct {
 	UserID string `json:"userID"`
@@ -24,7 +23,7 @@ func GenerateJWTToken(userID string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(jwtSecret)
+	tokenString, err := token.SignedString(config.AppConfig.JWTSecret)
 	if err != nil {
 		return "", fmt.Errorf("failed to signed string: %w", err)
 	}
@@ -35,7 +34,7 @@ func GenerateJWTToken(userID string) (string, error) {
 func ValidateJWTToken(tokenString string) (userID string, err error) {
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-		return jwtSecret, nil
+		return config.AppConfig.JWTSecret, nil
 	})
 
 	if err != nil {

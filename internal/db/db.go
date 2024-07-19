@@ -3,6 +3,7 @@ package db
 import (
 	"errors"
 	"fmt"
+	"glossika/internal/config"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -28,7 +29,10 @@ type dbHelper struct {
 }
 
 func Init() (I, error) {
-	dsn := "root:rootpassword@tcp(db:3306)/mydb?charset=utf8&parseTime=True&loc=Local"
+	dsn := fmt.Sprintf("%s:%s@tcp(db:3306)/%s?charset=utf8&parseTime=True&loc=Local",
+		config.AppConfig.MySQLUser,
+		config.AppConfig.MySQLPassword,
+		config.AppConfig.MySQLDatabase)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to open mysql db: %w", err)
