@@ -120,7 +120,7 @@ JWT_SECRET=defaultSecret
     ```json5
     {
         "email": "user@example.com",
-        "code": "111111" // login 成功時回覆的驗證碼
+        "code": "111111" // 註冊成功時回覆的驗證碼
     }
     ```
 
